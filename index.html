@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proxy Status Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #09090b;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .card {
+            background: rgba(24, 24, 27, 0.8);
+            border: 1px solid #27272a;
+            border-radius: 1rem;
+            width: 100%;
+            max-width: 32rem;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .subtitle {
+            color: #ff7d42;
+            text-transform: uppercase;
+            font-size: 0.875rem;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .title {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #fff, #ccc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .description {
+            color: #a1a1aa;
+            margin-bottom: 2rem;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            gap: 1rem;
+        }
+
+        .nav-button {
+            background: rgba(39, 39, 42, 0.8);
+            border: 1px solid #3f3f46;
+            color: #a1a1aa;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-button.active {
+            background: #ff7d42;
+            color: white;
+        }
+
+        #proxyList, #aboutSection {
+            display: none;
+        }
+
+        #proxyList.active, #aboutSection.active {
+            display: block;
+        }
+
+        .accordion-item {
+            background: rgba(39, 39, 42, 0.5);
+            border: 1px solid #3f3f46;
+            border-radius: 0.75rem;
+            margin-bottom: 0.75rem;
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            cursor: pointer;
+            background: rgba(39, 39, 42, 0.8);
+            transition: background 0.3s ease;
+        }
+
+        .accordion-header:hover {
+            background: rgba(39, 39, 42, 1);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 0 1rem;
+            background: rgba(24, 24, 27, 0.6);
+        }
+
+        .accordion-content.open {
+            max-height: 500px;
+            padding: 1rem;
+        }
+
+        .accordion-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .accordion-icon.rotated {
+            transform: rotate(180deg);
+        }
+
+        .proxy-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .proxy-item {
+            padding: 1rem;
+            border-radius: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 0.75rem;
+        }
+
+        .proxy-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .loading {
+            text-align: center;
+            color: #a1a1aa;
+            padding: 2rem;
+            animation: pulse 1.5s infinite;
+        }
+
+        .error {
+            text-align: center;
+            color: #f87171;
+            padding: 2rem;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            position: relative;
+            filter: brightness(1.2);
+        }
+
+        .status-indicator::before {
+            content: '';
+            position: absolute;
+            inset: -8px;
+            border-radius: 50%;
+            padding: 8px;
+            background: conic-gradient(from 0deg, var(--glow-color), transparent 40%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            animation: rotate 2s linear infinite;
+            opacity: 0.8;
+        }
+
+        .good {
+            background: linear-gradient(135deg, rgba(0, 255, 149, 0.327) 0%, rgba(37, 255, 164, 0.229) 100%);
+            box-shadow: 0 4px 15px rgba(0, 255, 149, 0.35);
+            border: 1px solid rgba(0, 255, 149, 0.3);
+        }
+
+        .somewhat {
+            background: linear-gradient(135deg, rgba(170, 158, 65, 0.796) 0%, rgba(255, 225, 0, 0.222) 100%);
+            box-shadow: 0 4px 15px rgba(255, 225, 0, 0.35);
+            border: 1px solid rgba(255, 225, 0, 0.3);
+        }
+
+        .no {
+            background: linear-gradient(135deg, rgba(253, 0, 76, 0.722) 0%, rgba(199, 40, 88, 0.225) 100%);
+            box-shadow: 0 4px 15px rgba(255, 0, 76, 0.35);
+            border: 1px solid rgba(255, 0, 76, 0.3);
+        }
+
+        .good .status-indicator {
+            background-color: #00ff95;
+            --glow-color: #00ff95;
+            box-shadow: 0 0 15px #00ff95, 0 0 30px #00ff95, 0 0 45px #00ff95;
+        }
+
+        .somewhat .status-indicator {
+            background-color: #ffe100;
+            --glow-color: #ffe100;
+            box-shadow: 0 0 15px #ffe100, 0 0 30px #ffe100, 0 0 45px #ffe100;
+        }
+
+        .no .status-indicator {
+            background-color: #ff004c;
+            --glow-color: #ff004c;
+            box-shadow: 0 0 15px #ff004c, 0 0 30px #ff004c, 0 0 45px #ff004c;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .status-group {
+            margin-bottom: 1rem;
+        }
+
+        .status-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .group-title {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="subtitle">Status Monitor</div>
+        <h1 class="title">Proxy Status</h1>
+        
+        <div class="nav">
+            <button class="nav-button active" data-target="proxyList">Proxy Status</button>
+            <button class="nav-button" data-target="aboutSection">About Us</button>
+        </div>
+
+        <div id="proxyList" class="active">
+            <p class="description">Real-time monitoring dashboard for proxy servers</p>
+            <div id="proxyStatusList" class="proxy-list">
+                <div class="loading">Loading status data...</div>
+            </div>
+        </div>
+
+        <div id="aboutSection" class="accordion">
+            <div class="accordion-item">
+                <div class="accordion-header">
+                    <span>Our Mission</span>
+                    <svg class="accordion-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+                <div class="accordion-content">
+                    <p>At ProxyPulse, our mission is to provide reliable and high-performance proxy services that empower businesses and individuals to navigate the digital landscape securely and efficiently.</p>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <div class="accordion-header">
+                    <span>Our Technology</span>
+                    <svg class="accordion-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+                <div class="accordion-content">
+                    <p>We leverage cutting-edge infrastructure and advanced monitoring techniques to ensure our proxy network remains robust, fast, and consistently available across multiple geographies.</p>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <div class="accordion-header">
+                    <span>Our Commitment</span>
+                    <svg class="accordion-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+                <div class="accordion-content">
+                    <p>We are committed to transparency, continuous improvement, and providing our clients with the most reliable proxy services in the market.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Navigation toggle
+        document.querySelectorAll('.nav-button').forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active from all buttons and sections
+                document.querySelectorAll('.nav-button, #proxyList, #aboutSection').forEach(el => {
+                    el.classList.remove('active');
+                });
+
+                // Add active to clicked button and corresponding section
+                button.classList.add('active');
+                document.getElementById(button.dataset.target).classList.add('active');
+            });
+        });
+
+        // Accordion functionality
+        document.querySelectorAll('.accordion-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const content = header.nextElementSibling;
+                const icon = header.querySelector('.accordion-icon');
+
+                content.classList.toggle('open');
+                icon.classList.toggle('rotated');
+            });
+        });
+
+        // Proxy status functions from previous script
+        function renderProxies(proxies) {
+            const proxyList = document.getElementById('proxyStatusList');
+            
+            const groupedProxies = {
+                good: proxies.filter(p => p.status === 'good'),
+                somewhat: proxies.filter(p => p.status === 'somewhat'),
+                no: proxies.filter(p => p.status === 'no')
+            };
+
+            const html = `
+                ${groupedProxies.good.length > 0 ? `
+                    <div class="status-group">
+                        <h2 class="group-title good-text">Verified</h2>
+                        ${groupedProxies.good.map(proxy => `
+                            <div class="proxy-item good">
+                                <span>${proxy.name}</span>
+                                <div class="status-indicator"></div>
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+
+                ${groupedProxies.somewhat.length > 0 ? `
+                    <div class="status-group">
+                        <h2 class="group-title somewhat-text">Verifying</h2>
+                        ${groupedProxies.somewhat.map(proxy => `
+                            <div class="proxy-item somewhat">
+                                <span>${proxy.name}</span>
+                                <div class="status-indicator"></div>
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+
+                ${groupedProxies.no.length > 0 ? `
+                    <div class="status-group">
+                        <h2 class="group-title no-text">Unverified</h2>
+                        ${groupedProxies.no.map(proxy => `
+                            <div class="proxy-item no">
+                                <span>${proxy.name}</span>
+                                <div class="status-indicator"></div>
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+            `;
+
+            proxyList.innerHTML = html;
+        }
+
+        function showError(message) {
+            const proxyList = document.getElementById('proxyStatusList');
+            proxyList.innerHTML = `<div class="error">${message}</div>`;
+        }
+
+        async function updateProxyStatus() {
+            try {
+                const response = await fetch('proxies.json');
+                if (!response.ok) {
+                    throw new Error('Failed to load proxy status data');
+                }
+                const data = await response.json();
+                renderProxies(data);
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+
+        // Initial load
+        updateProxyStatus();
+
+        // Refresh every 30 seconds
+        setInterval(updateProxyStatus, 30000);
+    </script>
+</body>
+</html>

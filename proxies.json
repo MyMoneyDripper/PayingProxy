@@ -1,0 +1,22 @@
+[
+    {
+        "name": "US-East Proxy",
+        "status": "good"
+    },
+    {
+        "name": "EU-West Proxy", 
+        "status": "somewhat"
+    },
+    {
+        "name": "Asia-Pacific Proxy",
+        "status": "no"
+    },
+    {
+        "name": "South America Proxy",
+        "status": "good"
+    },
+    {
+        "name": "Africa Proxy",
+        "status": "somewhat"
+    }
+]
