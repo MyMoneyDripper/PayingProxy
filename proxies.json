@@ -1,22 +1,27 @@
 [
     {
         "name": "US-East Proxy",
-        "status": "good"
+        "status": "good",
+        "url": "https://us-east.proxy.example.com"
     },
     {
         "name": "EU-West Proxy", 
-        "status": "somewhat"
+        "status": "somewhat",
+        "url": "https://eu-west.proxy.example.com"
     },
     {
         "name": "Asia-Pacific Proxy",
-        "status": "no"
+        "status": "no",
+        "url": "https://ap.proxy.example.com"
     },
     {
         "name": "South America Proxy",
-        "status": "good"
+        "status": "good",
+        "url": "https://sa.proxy.example.com"
     },
     {
         "name": "Africa Proxy",
-        "status": "somewhat"
+        "status": "somewhat",
+        "url": "https://af.proxy.example.com"
     }
 ]

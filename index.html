@@ -65,7 +65,7 @@
         .nav-button {
             background: rgba(39, 39, 42, 0.8);
             border: 1px solid #3f3f46;
-            color: #a1a1aa;
+            color: #ffffff;
             padding: 0.5rem 1rem;
             border-radius: 0.5rem;
             cursor: pointer;
@@ -147,11 +147,17 @@
             backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             margin-bottom: 0.75rem;
+            color: #ffffff;  /* Add this line to ensure white text */
         }
 
         .proxy-item:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .proxy-item a {
+            color: #ffffff;  /* Add this to ensure links are also white */
+            text-decoration: none;
         }
 
         .loading {
@@ -348,10 +354,12 @@
                     <div class="status-group">
                         <h2 class="group-title good-text">Verified</h2>
                         ${groupedProxies.good.map(proxy => `
-                            <div class="proxy-item good">
-                                <span>${proxy.name}</span>
-                                <div class="status-indicator"></div>
-                            </div>
+                            <a href="${proxy.url}" target="_blank" style="text-decoration: none;">
+                                <div class="proxy-item good">
+                                    <span>${proxy.name}</span>
+                                    <div class="status-indicator"></div>
+                                </div>
+                            </a>
                         `).join('')}
                     </div>
                 ` : ''}
@@ -360,10 +368,12 @@
                     <div class="status-group">
                         <h2 class="group-title somewhat-text">Verifying</h2>
                         ${groupedProxies.somewhat.map(proxy => `
-                            <div class="proxy-item somewhat">
-                                <span>${proxy.name}</span>
-                                <div class="status-indicator"></div>
-                            </div>
+                            <a href="${proxy.url}" target="_blank" style="text-decoration: none;">
+                                <div class="proxy-item somewhat">
+                                    <span>${proxy.name}</span>
+                                    <div class="status-indicator"></div>
+                                </div>
+                            </a>
                         `).join('')}
                     </div>
                 ` : ''}
@@ -372,10 +382,12 @@
                     <div class="status-group">
                         <h2 class="group-title no-text">Unverified</h2>
                         ${groupedProxies.no.map(proxy => `
-                            <div class="proxy-item no">
-                                <span>${proxy.name}</span>
-                                <div class="status-indicator"></div>
-                            </div>
+                            <a href="${proxy.url}" target="_blank" style="text-decoration: none;">
+                                <div class="proxy-item no">
+                                    <span>${proxy.name}</span>
+                                    <div class="status-indicator"></div>
+                                </div>
+                            </a>
                         `).join('')}
                     </div>
                 ` : ''}
