@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Proxy Status Dashboard</title>
+    <title>Website Status Dashboard</title>
     <style>
         * {
             margin: 0;
@@ -255,20 +255,107 @@
             margin-bottom: 1rem;
             font-weight: 600;
         }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: #1e1e21;
+            margin: 10% auto;
+            padding: 2rem;
+            border: 1px solid #3f3f46;
+            width: 90%;
+            max-width: 550px;
+            border-radius: 1rem;
+            text-align: left;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 0.75rem 1.5rem;
+        }
+
+        .modal-grid p {
+            margin: 0;
+        }
+
+        .modal-grid strong {
+            color: #a1a1aa;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .modal-button {
+            background: #ff7d42;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 1rem;
+        }
     </style>
 </head>
 <body>
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle" style="text-align: center; margin-bottom: 1.5rem; font-size: 1.75rem;"></h2>
+            <div class="modal-grid">
+                <p><strong>Payout Rate:</strong></p><p><span id="modalPayoutRate"></span></p>
+                <p><strong>Minimum Payout:</strong></p><p><span id="modalMinimumPayout"></span></p>
+                <p><strong>Payout Method:</strong></p><p><span id="modalPayoutMethod"></span></p>
+                <p><strong>Sign Up Bonus:</strong></p><p><span id="modalSignUpBonus"></span></p>
+                <p><strong>Registration:</strong></p><p><span id="modalRegistrationRequired"></span></p>
+                <p><strong>Referral Program:</strong></p><p><span id="modalReferralProgram"></span></p>
+                <p><strong>Countries:</strong></p><p><span id="modalAvailableCountries"></span></p>
+                <p><strong>Platform:</strong></p><p><span id="modalPlatformSupported"></span></p>
+                <p><strong>Trustpilot:</strong></p><p><span id="modalScore"></span></p>
+                <p><strong>Play Store:</strong></p><p><span id="modalPlayStoreReview"></span></p>
+                <p><strong>App Store:</strong></p><p><span id="modalAppStoreReview"></span></p>
+            </div>
+            <div style="text-align: center; margin-top: 1.5rem;">
+                <a id="modalLink" href="#" target="_blank" class="modal-button">Visit Website</a>
+            </div>
+        </div>
+    </div>
     <div class="card">
         <div class="subtitle">Status Monitor</div>
-        <h1 class="title">Proxy Status</h1>
+        <h1 class="title">Website Status</h1>
         
         <div class="nav">
-            <button class="nav-button active" data-target="proxyList">Proxy Status</button>
-            <button class="nav-button" data-target="aboutSection">About Us</button>
+            <button class="nav-button active" data-target="proxyList">Website Status</button>
+            <button class="nav-button" data-target="aboutSection">About</button>
         </div>
 
         <div id="proxyList" class="active">
-            <p class="description">Real-time monitoring dashboard for proxy servers</p>
+            <p class="description">Real-time monitoring dashboard for various websites and services.</p>
             <div id="proxyStatusList" class="proxy-list">
                 <div class="loading">Loading status data...</div>
             </div>
@@ -352,48 +439,64 @@
             const html = `
                 ${groupedProxies.good.length > 0 ? `
                     <div class="status-group">
-                        <h2 class="group-title good-text">Verified</h2>
+                        <h2 class="group-title good-text">Reliable</h2>
                         ${groupedProxies.good.map(proxy => `
-                            <a href="${proxy.url}" target="_blank" style="text-decoration: none;">
-                                <div class="proxy-item good">
-                                    <span>${proxy.name}</span>
-                                    <div class="status-indicator"></div>
-                                </div>
-                            </a>
+                            <div class="proxy-item good" data-proxy='${JSON.stringify(proxy)}'>
+                                <span>${proxy.name}</span>
+                                <div class="status-indicator"></div>
+                            </div>
                         `).join('')}
                     </div>
                 ` : ''}
 
                 ${groupedProxies.somewhat.length > 0 ? `
                     <div class="status-group">
-                        <h2 class="group-title somewhat-text">Verifying</h2>
+                        <h2 class="group-title somewhat-text">Somewhat Reliable</h2>
                         ${groupedProxies.somewhat.map(proxy => `
-                            <a href="${proxy.url}" target="_blank" style="text-decoration: none;">
-                                <div class="proxy-item somewhat">
-                                    <span>${proxy.name}</span>
-                                    <div class="status-indicator"></div>
-                                </div>
-                            </a>
+                            <div class="proxy-item somewhat" data-proxy='${JSON.stringify(proxy)}'>
+                                <span>${proxy.name}</span>
+                                <div class="status-indicator"></div>
+                            </div>
                         `).join('')}
                     </div>
                 ` : ''}
 
                 ${groupedProxies.no.length > 0 ? `
                     <div class="status-group">
-                        <h2 class="group-title no-text">Unverified</h2>
+                        <h2 class="group-title no-text">Unreliable</h2>
                         ${groupedProxies.no.map(proxy => `
-                            <a href="${proxy.url}" target="_blank" style="text-decoration: none;">
-                                <div class="proxy-item no">
-                                    <span>${proxy.name}</span>
-                                    <div class="status-indicator"></div>
-                                </div>
-                            </a>
+                            <div class="proxy-item no" data-proxy='${JSON.stringify(proxy)}'>
+                                <span>${proxy.name}</span>
+                                <div class="status-indicator"></div>
+                            </div>
                         `).join('')}
                     </div>
                 ` : ''}
             `;
 
             proxyList.innerHTML = html;
+
+            document.querySelectorAll('.proxy-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const proxy = JSON.parse(item.dataset.proxy);
+
+                    document.getElementById('modalTitle').innerText = proxy.name;
+                    document.getElementById('modalPayoutRate').innerText = proxy.payoutRate;
+                    document.getElementById('modalMinimumPayout').innerText = proxy.minimumPayout;
+                    document.getElementById('modalPayoutMethod').innerText = proxy.payoutMethod;
+                    document.getElementById('modalSignUpBonus').innerText = proxy.signUpBonus;
+                    document.getElementById('modalRegistrationRequired').innerText = proxy.registrationRequired;
+                    document.getElementById('modalReferralProgram').innerText = proxy.referralProgram;
+                    document.getElementById('modalAvailableCountries').innerText = proxy.availableCountries;
+                    document.getElementById('modalPlatformSupported').innerText = proxy.platformSupported;
+                    document.getElementById('modalScore').innerText = proxy.trustPilotScore;
+                    document.getElementById('modalPlayStoreReview').innerText = proxy.playStoreReview;
+                    document.getElementById('modalAppStoreReview').innerText = proxy.appStoreReview;
+                    document.getElementById('modalLink').href = proxy.url;
+
+                    document.getElementById('myModal').style.display = "block";
+                });
+            });
         }
 
         function showError(message) {
@@ -419,6 +522,17 @@
 
         // Refresh every 30 seconds
         setInterval(updateProxyStatus, 30000);
+
+        // Modal close functionality
+        document.querySelector('.close').addEventListener('click', () => {
+            document.getElementById('myModal').style.display = "none";
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target == document.getElementById('myModal')) {
+                document.getElementById('myModal').style.display = "none";
+            }
+        });
     </script>
 </body>
 </html>
