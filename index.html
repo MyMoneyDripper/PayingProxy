@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Website Status Dashboard</title>
+    <title>BandwidthHub - Share Your Bandwidth</title>
     <style>
         * {
             margin: 0;
@@ -14,45 +14,394 @@
 
         body {
             min-height: 100vh;
-            background: #09090b;
+            background: linear-gradient(135deg, #6B46C1 0%, #4834B0 100%);
             color: #fff;
+            line-height: 1.5;
+        }
+
+        .header {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
-            padding: 2rem;
+            padding: 1.5rem 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
         }
 
-        .card {
-            background: rgba(24, 24, 27, 0.8);
-            border: 1px solid #27272a;
-            border-radius: 1rem;
-            width: 100%;
-            max-width: 32rem;
-            padding: 2rem;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 600;
         }
 
-        .subtitle {
-            color: #ff7d42;
-            text-transform: uppercase;
-            font-size: 0.875rem;
-            letter-spacing: 0.05em;
-            margin-bottom: 0.5rem;
-        }
-
-        .title {
-            font-size: 2rem;
+        .logo-img {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: linear-gradient(135deg, #4ADE80, #3B82F6);
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
             font-weight: bold;
-            margin-bottom: 1rem;
-            background: linear-gradient(to right, #fff, #ccc);
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.3s;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .main {
+            width: 100%;
+            padding: 2rem;
+            overflow-x: hidden;
+        }
+
+        .directory-container {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 2rem 0;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+            max-width: 1800px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 0 1rem;
+        }
+
+        @media (max-width: 1024px) {
+            .platform-table {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .table-content {
+                min-width: 1200px;
+            }
+
+            .main {
+                padding: 1rem;
+            }
+
+            .hero {
+                padding: 0;
+            }
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .gradient-text {
+            background: linear-gradient(to right, #4ADE80, #3B82F6);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .description {
-            color: #a1a1aa;
+        .hero-description {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.9);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .hero-features {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .feature-icon {
+            font-size: 1.25rem;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 5vw, 2.5rem);
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .section-description {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.9);
             margin-bottom: 2rem;
+            font-size: clamp(1rem, 2vw, 1.125rem);
+        }
+
+        .filters {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            padding: 0 1rem;
+        }
+
+        .filter-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.75rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .nav {
+                gap: 1rem;
+            }
+
+            .hero-title {
+                font-size: clamp(2rem, 8vw, 3.5rem);
+            }
+
+            .hero-features {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .filters {
+                gap: 0.5rem;
+            }
+
+            .filter-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.875rem;
+            }
+        }
+
+        .filter-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .filter-btn.active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .platform-table {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 1.5rem;
+            overflow-x: auto;
+            overflow-y: hidden;
+            backdrop-filter: blur(10px);
+            margin-top: 2rem;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+        }
+
+        .platform-table::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .platform-table::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .platform-table::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+        }
+
+        .table-content {
+            min-width: max-content;
+        }
+
+        .table-header {
+            display: grid;
+            grid-template-columns: minmax(250px, 2.5fr) minmax(100px, 1fr) minmax(150px, 1.5fr) minmax(100px, 1fr) minmax(80px, 0.8fr) minmax(200px, 2fr) minmax(150px, 1.5fr) minmax(100px, 1fr);
+            gap: 1.5rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.15);
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .th {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .platform-row {
+            display: grid;
+            grid-template-columns: minmax(250px, 2.5fr) minmax(100px, 1fr) minmax(150px, 1.5fr) minmax(100px, 1fr) minmax(80px, 0.8fr) minmax(200px, 2fr) minmax(150px, 1.5fr) minmax(100px, 1fr);
+            gap: 1.5rem;
+            padding: 1.5rem;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: background-color 0.3s ease;
+        }
+
+        .platform-row:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .platform-row:last-child {
+            border-bottom: none;
+        }
+
+        .platform-info {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .platform-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 1rem;
+            background: rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .platform-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .platform-tag {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .bonus-amount {
+            color: #4ADE80;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .payment-methods {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .payment-badge {
+            padding: 0.35rem 0.85rem;
+            border-radius: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            font-size: 0.875rem;
+            white-space: nowrap;
+        }
+
+        .device-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .device-badge {
+            padding: 0.35rem 0.75rem;
+            border-radius: 0.75rem;
+            background: rgba(255, 255, 255, 0.1);
+            font-size: 0.875rem;
+            white-space: nowrap;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .reliability-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .reliability-good {
+            background: rgba(74, 222, 128, 0.2);
+            color: #4ADE80;
+        }
+
+        .reliability-somewhat {
+            background: rgba(250, 204, 21, 0.2);
+            color: #FACC15;
+        }
+
+        .reliability-no {
+            background: rgba(239, 68, 68, 0.2);
+            color: #EF4444;
+        }
+
+        .join-btn {
+            padding: 0.5rem 1.5rem;
+            border-radius: 0.75rem;
+            background: #4ADE80;
+            color: white;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .join-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(74, 222, 128, 0.3);
         }
 
         .nav {
@@ -195,6 +544,7 @@
             padding: 8px;
             background: conic-gradient(from 0deg, var(--glow-color), transparent 40%);
             -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             -webkit-mask-composite: xor;
             mask-composite: exclude;
             animation: rotate 2s linear infinite;
@@ -345,194 +695,172 @@
             </div>
         </div>
     </div>
-    <div class="card">
-        <div class="subtitle">Status Monitor</div>
-        <h1 class="title">Website Status</h1>
-        
-        <div class="nav">
-            <button class="nav-button active" data-target="proxyList">Website Status</button>
-            <button class="nav-button" data-target="aboutSection">About</button>
+    <header class="header">
+        <div class="logo">
+            <div class="logo-img">B</div>
+            <span>BandwidthHub</span>
         </div>
+        <nav class="nav">
+            <a href="#" class="nav-link active">Directory</a>
+            <a href="#" class="nav-link">Compare</a>
+            <a href="#" class="nav-link">Guides</a>
+        </nav>
+    </header>
 
-        <div id="proxyList" class="active">
-            <p class="description">Real-time monitoring dashboard for various websites and services.</p>
-            <div id="proxyStatusList" class="proxy-list">
-                <div class="loading">Loading status data...</div>
-            </div>
-        </div>
-
-        <div id="aboutSection" class="accordion">
-            <div class="accordion-item">
-                <div class="accordion-header">
-                    <span>Our Mission</span>
-                    <svg class="accordion-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="6 9 12 15 18 9"></polyline>
-                    </svg>
+    <main class="main">
+        <section class="hero">
+            <h1 class="hero-title">Share Your <span class="gradient-text">Bandwidth</span></h1>
+            <p class="hero-description">
+                Discover the most comprehensive directory of bandwidth sharing platforms.
+                Compare earnings, reliability, and features all in one place.
+            </p>
+            <div class="hero-features">
+                <div class="feature">
+                    <span class="feature-icon">🌍</span>
+                    <span>Global Coverage</span>
                 </div>
-                <div class="accordion-content">
-                    <p>At ProxyPulse, our mission is to provide reliable and high-performance proxy services that empower businesses and individuals to navigate the digital landscape securely and efficiently.</p>
+                <div class="feature">
+                    <span class="feature-icon">💰</span>
+                    <span>Real Payouts</span>
                 </div>
-            </div>
-
-            <div class="accordion-item">
-                <div class="accordion-header">
-                    <span>Our Technology</span>
-                    <svg class="accordion-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="6 9 12 15 18 9"></polyline>
-                    </svg>
-                </div>
-                <div class="accordion-content">
-                    <p>We leverage cutting-edge infrastructure and advanced monitoring techniques to ensure our proxy network remains robust, fast, and consistently available across multiple geographies.</p>
+                <div class="feature">
+                    <span class="feature-icon">📱</span>
+                    <span>All Devices</span>
                 </div>
             </div>
+        </section>
 
-            <div class="accordion-item">
-                <div class="accordion-header">
-                    <span>Our Commitment</span>
-                    <svg class="accordion-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="6 9 12 15 18 9"></polyline>
-                    </svg>
+        <section class="directory">
+            <div class="directory-container">
+                <h2 class="section-title">Bandwidth Sharing Directory</h2>
+                <p class="section-description">Compare platforms, earnings, and reliability ratings</p>
+                
+                <div class="filters">
+                    <button class="filter-btn active">All Platforms</button>
+                    <button class="filter-btn">Highly Reliable</button>
+                    <button class="filter-btn">Moderately Reliable</button>
+                    <button class="filter-btn">Caution Advised</button>
                 </div>
-                <div class="accordion-content">
-                    <p>We are committed to transparency, continuous improvement, and providing our clients with the most reliable proxy services in the market.</p>
+
+                <div class="platform-table">
+                    <div class="table-content">
+                        <div class="table-header">
+                            <div class="th platform">Platform</div>
+                            <div class="th bonus">Bonus</div>
+                            <div class="th payout">Payout Method</div>
+                            <div class="th min-payout">Min. Payout</div>
+                            <div class="th global">Global</div>
+                            <div class="th devices">Supported Devices</div>
+                            <div class="th reliability">Reliability</div>
+                            <div class="th action">Action</div>
+                        </div>
+                        <div id="platformList">
+                            <div class="loading">Loading platform data...</div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
+    </main>
     </div>
 
     <script>
-        // Navigation toggle
-        document.querySelectorAll('.nav-button').forEach(button => {
+        let allPlatforms = [];
+
+        // Filter functionality
+        document.querySelectorAll('.filter-btn').forEach(button => {
             button.addEventListener('click', () => {
-                // Remove active from all buttons and sections
-                document.querySelectorAll('.nav-button, #proxyList, #aboutSection').forEach(el => {
-                    el.classList.remove('active');
-                });
-
-                // Add active to clicked button and corresponding section
+                document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
                 button.classList.add('active');
-                document.getElementById(button.dataset.target).classList.add('active');
+                
+                const filterText = button.textContent.trim();
+                let filteredPlatforms;
+                
+                switch(filterText) {
+                    case 'Highly Reliable':
+                        filteredPlatforms = allPlatforms.filter(p => p.status === 'good');
+                        break;
+                    case 'Moderately Reliable':
+                        filteredPlatforms = allPlatforms.filter(p => p.status === 'somewhat');
+                        break;
+                    case 'Caution Advised':
+                        filteredPlatforms = allPlatforms.filter(p => p.status === 'no');
+                        break;
+                    default:
+                        filteredPlatforms = allPlatforms;
+                }
+                
+                renderPlatforms(filteredPlatforms);
             });
         });
 
-        // Accordion functionality
-        document.querySelectorAll('.accordion-header').forEach(header => {
-            header.addEventListener('click', () => {
-                const content = header.nextElementSibling;
-                const icon = header.querySelector('.accordion-icon');
-
-                content.classList.toggle('open');
-                icon.classList.toggle('rotated');
-            });
-        });
-
-        // Proxy status functions from previous script
-        function renderProxies(proxies) {
-            const proxyList = document.getElementById('proxyStatusList');
+        function renderPlatforms(platforms) {
+            const platformList = document.getElementById('platformList');
             
-            const groupedProxies = {
-                good: proxies.filter(p => p.status === 'good'),
-                somewhat: proxies.filter(p => p.status === 'somewhat'),
-                no: proxies.filter(p => p.status === 'no')
-            };
-
-            const html = `
-                ${groupedProxies.good.length > 0 ? `
-                    <div class="status-group">
-                        <h2 class="group-title good-text">Reliable</h2>
-                        ${groupedProxies.good.map(proxy => `
-                            <div class="proxy-item good" data-proxy='${JSON.stringify(proxy)}'>
-                                <span>${proxy.name}</span>
-                                <div class="status-indicator"></div>
-                            </div>
+            const html = platforms.map(platform => {
+                // Split platform supported into array
+                const devices = platform.platformSupported.split(', ');
+                // Split payout methods into array
+                const payoutMethods = platform.payoutMethod.split(', ');
+                // Map status to reliability level
+                const reliability = platform.status === 'good' ? 'Highly Reliable' :
+                                  platform.status === 'somewhat' ? 'Moderately Reliable' :
+                                  'Caution Advised';
+                
+                return `
+                <div class="platform-row">
+                    <div class="platform-info">
+                        <div class="platform-icon">${platform.name[0]}</div>
+                        <div>
+                            <div class="platform-name">${platform.name}</div>
+                            <div class="platform-tag">${platform.payoutRate}</div>
+                        </div>
+                    </div>
+                    <div class="bonus-amount">${platform.signUpBonus}</div>
+                    <div class="payment-methods">
+                        ${payoutMethods.map(method => `
+                            <span class="payment-badge">${method}</span>
                         `).join('')}
                     </div>
-                ` : ''}
-
-                ${groupedProxies.somewhat.length > 0 ? `
-                    <div class="status-group">
-                        <h2 class="group-title somewhat-text">Somewhat Reliable</h2>
-                        ${groupedProxies.somewhat.map(proxy => `
-                            <div class="proxy-item somewhat" data-proxy='${JSON.stringify(proxy)}'>
-                                <span>${proxy.name}</span>
-                                <div class="status-indicator"></div>
-                            </div>
+                    <div>${platform.minimumPayout}</div>
+                    <div>${platform.availableCountries.toLowerCase().includes('global') ? '✓' : '✗'}</div>
+                    <div class="device-badges">
+                        ${devices.map(device => `
+                            <span class="device-badge">${device}</span>
                         `).join('')}
                     </div>
-                ` : ''}
-
-                ${groupedProxies.no.length > 0 ? `
-                    <div class="status-group">
-                        <h2 class="group-title no-text">Unreliable</h2>
-                        ${groupedProxies.no.map(proxy => `
-                            <div class="proxy-item no" data-proxy='${JSON.stringify(proxy)}'>
-                                <span>${proxy.name}</span>
-                                <div class="status-indicator"></div>
-                            </div>
-                        `).join('')}
+                    <div class="reliability-badge reliability-${platform.status}">
+                        ${reliability}
                     </div>
-                ` : ''}
-            `;
+                    <div>
+                        <a href="${platform.url}" class="join-btn" target="_blank">Join Now</a>
+                    </div>
+                </div>
+            `}).join('');
 
-            proxyList.innerHTML = html;
-
-            document.querySelectorAll('.proxy-item').forEach(item => {
-                item.addEventListener('click', () => {
-                    const proxy = JSON.parse(item.dataset.proxy);
-
-                    document.getElementById('modalTitle').innerText = proxy.name;
-                    document.getElementById('modalPayoutRate').innerText = proxy.payoutRate;
-                    document.getElementById('modalMinimumPayout').innerText = proxy.minimumPayout;
-                    document.getElementById('modalPayoutMethod').innerText = proxy.payoutMethod;
-                    document.getElementById('modalSignUpBonus').innerText = proxy.signUpBonus;
-                    document.getElementById('modalRegistrationRequired').innerText = proxy.registrationRequired;
-                    document.getElementById('modalReferralProgram').innerText = proxy.referralProgram;
-                    document.getElementById('modalAvailableCountries').innerText = proxy.availableCountries;
-                    document.getElementById('modalPlatformSupported').innerText = proxy.platformSupported;
-                    document.getElementById('modalScore').innerText = proxy.trustPilotScore;
-                    document.getElementById('modalPlayStoreReview').innerText = proxy.playStoreReview;
-                    document.getElementById('modalAppStoreReview').innerText = proxy.appStoreReview;
-                    document.getElementById('modalLink').href = proxy.url;
-
-                    document.getElementById('myModal').style.display = "block";
-                });
-            });
+            platformList.innerHTML = html;
         }
 
         function showError(message) {
-            const proxyList = document.getElementById('proxyStatusList');
-            proxyList.innerHTML = `<div class="error">${message}</div>`;
+            const platformList = document.getElementById('platformList');
+            platformList.innerHTML = `<div class="error">${message}</div>`;
         }
 
-        async function updateProxyStatus() {
+        async function loadPlatforms() {
             try {
                 const response = await fetch('proxies.json');
                 if (!response.ok) {
-                    throw new Error('Failed to load proxy status data');
+                    throw new Error('Failed to load platform data');
                 }
-                const data = await response.json();
-                renderProxies(data);
+                allPlatforms = await response.json();
+                renderPlatforms(allPlatforms);
             } catch (error) {
                 showError(error.message);
             }
         }
 
         // Initial load
-        updateProxyStatus();
-
-        // Refresh every 30 seconds
-        setInterval(updateProxyStatus, 30000);
-
-        // Modal close functionality
-        document.querySelector('.close').addEventListener('click', () => {
-            document.getElementById('myModal').style.display = "none";
-        });
-
-        window.addEventListener('click', (event) => {
-            if (event.target == document.getElementById('myModal')) {
-                document.getElementById('myModal').style.display = "none";
-            }
-        });
+        loadPlatforms();
     </script>
 </body>
 </html>
